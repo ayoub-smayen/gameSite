@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title> PONG GAME </title>
+</head>
+<body>
+
+<script>
+
+let canvas, difficulty, paddleX, paddleY, paddleWidth, paddleHeight, aiX, aiY, aiAccuracy, aiVar, ballX, ballY, ballRad, ballSpeed, ballVX, ballVY, maxSpeed, score, highScore;
+
+function setPaddleX(){
+    paddleX = mouseX - 150/2;
+}
+
+function detectCollision(){
+    if (paddleX <= 0){
+        paddleX = 0;
+    }
+    if (paddleX + paddleWidth >= width){
+        paddleX = width - paddleWidth;
+    }
+
+    if (aiX <= 0){
+        aiX = 0;
+    }
+    if (aiX + paddleWidth >= width){
+        aiX = width - paddleWidth;
+    }
+
+    if (
+        (ballX + 10 >= paddleX) &&
+        (ballX - 10 <= paddleX + paddleWidth) &&
+        (ballY + 10 >= paddleY) &&
+        (ballY + 10 <= paddleY + 5)
+    ){
+        if (ballX < paddleX + paddleWidth/2){
+            aiVar = random(-aiAccuracy, aiAccuracy);
+            ballVX = -ballSpeed;
+            ballVY *= -1;
+        }
+        else{
+            aiVar = random(-aiAccuracy, aiAccuracy);
+            ballVX = ballSpeed;
+            ballVY *= -1;
+        }
+        ballSpeed += 0.4;
+    }
+
+    if (
+        (ballX + 10 >= aiX) &&
+        (ballX - 10 <= aiX + paddleWidth) &&
+        (ballY - 10 <= aiY + paddleHeight) &&
+        (ballY - 10 >= aiY - 5)
+    ){
+        if (ballX < aiX + paddleWidth/2){
+            aiVar = random(-aiAccuracy, aiAccuracy);
+            ballVX = -ballSpeed;
+            ballVY *= -1;
+        }
+        else{
+            aiVar = random(-aiAccuracy, aiAccuracy);
+            ballVX = ballSpeed;
+            ballVY *= -1;
+        }
+        ballSpeed += 0.4;
+    }
+}
+
+function moveBall(){
+    ballX += ballVX;
+    ballY += ballVY;
+
+    if (ballX - 10 <= 0){
+        ballVX = abs(ballSpeed);
+    }
+    if (ballX + 10 >= width){
+        ballVX = -1*abs(ballSpeed);
+    }
+    if (ballY < 0){
+        ++score;
+        alert("You win!");
+        reset();
+    }
+    if (ballY > height){
+        if (score > highScore){
+            highScore = score;
+        }
+        score = 0;
+        alert("Game Over!");
+        reset();
+    }
+
+    if (ballSpeed >= maxSpeed){
+        ballSpeed = maxSpeed;
+    }
+}
+
+function initAI(){
+    aiX = ballX - paddleWidth/2 + aiVar;
+}
+
+function reset(){
+    ballX = width/2;
+    ballY = height/2;
+    ballSpeed = 3.5;
+    ballVX = ballSpeed;
+    ballVY = ballSpeed;
+}
+
+function setup(){
+    canvas = createCanvas(windowWidth, windowHeight);
+    canvas.style("position", "fixed");
+    canvas.style("top", 0);
+    canvas.style("left", 0);
+
+    difficulty = prompt("Choose difficulty! (easy/medium/hard/impossible)");
+
+    score = 0;
+    highScore = 0;
+
+    paddleX = width/2 - 150/2;
+    paddleY = height - 50;
+    paddleWidth = 150;
+    paddleHeight = 20;
+
+    aiX = width/2 - 150/2;
+    aiY = 50;
+
+    switch (difficulty.toLowerCase()){
+        case "easy":
+            aiAccuracy = 200;
+            maxSpeed = 6;
+            break;
+        case "medium":
+            aiAccuracy = 100;
+            maxSpeed = 8;
+            break;
+        case "hard":
+            aiAccuracy = 50;
+            maxSpeed = 10;
+            break;
+        case "impossible":
+            aiAccuracy = 10;
+            maxSpeed = 12;
+            break;
+        default:
+            aiAccuracy = 100;
+            maxSpeed = 8;
+    }
+    aiVar = random(-aiAccuracy, aiAccuracy);
+
+    ballX = width/2;
+    ballY = height/2;
+    ballSpeed = 3.5;
+    ballVX = ballSpeed;
+    ballVY = ballSpeed;
+    ballRad = 10;
+}
+
+function draw(){
+    background(0);
+    fill(color(255, 255, 255));
+    rect(paddleX, paddleY, paddleWidth, paddleHeight);
+    rect(aiX, aiY, paddleWidth, paddleHeight);
+    circle(ballX, ballY, 2*ballRad);
+    textSize(20);
+    fill(color(225, 225, 225));
+    text(`Score: ${score}`, 20, 30);
+    text(`HighScore: ${highScore}`, 20, 60);
+    setPaddleX();
+    initAI();
+    detectCollision();
+    moveBall();
+}
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/p5@1.3.1/lib/p5.js"></script>
+</body>
+</html>
