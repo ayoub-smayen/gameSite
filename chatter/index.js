@@ -35,7 +35,7 @@ var init = function () {
           }).then(
             (response) => {
               CometChatWidget.launch({
-                widgetID: "0a095bb8-74a4-4f2d-830d-36c669555f5d",
+                widgetID: "295aacd9-1227-4057-8ba6-9951f38fac21",
                 target: "#cometchat",
                 roundedCorners: "true",
                 height: "600px",
@@ -54,7 +54,7 @@ var init = function () {
           console.log("User details fetching failed with error:", error);
 
           // create user
-          let apiKey = "a660ee508bb8d428d37daf432c1bec1f529653ef";
+          let apiKey = "39539091e1e948540b6491c06e9d4fdf231a2a0c";
           var uid = userId;
           var name = userName;
 
